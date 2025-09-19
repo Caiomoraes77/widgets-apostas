@@ -1,153 +1,148 @@
-/* widgets-apostas v1.0 – sticky footer rotativo (Apostas Esportivas) */
-(function(){
-  if (window.__apw_loaded) return; window.__apw_loaded = true;
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Banner Apostas – Dinâmico</title>
 
-  // ---- Config: marcas (tabela do cliente) ----
-  const BRANDS = [
-    { id:"OP1", nome:"EstrelaBet", logo:"https://i.postimg.cc/sx9Md8nC/f12bet-1.png",
-      cta:"Aposte Agora", link:"https://go.terrordasbets.com/estrelabet", cor:"#FFB800", peso:20,
-      chips:["Depósito Mínimo R$1","Promoções Incríveis","Rodadas Grátis"],
-      disc:"Autorização SPA/MF nº 320/2025: Publicidade. Aposte com responsabilidade. +18." },
-    { id:"OP2", nome:"F12bet", logo:"https://i.postimg.cc/MZyMQMz3/f12bet.png",
-      cta:"Aposte Agora", link:"https://go.terrordasbets.com/f12bet", cor:"#A7F432", peso:20,
-      chips:["Depósito Mínimo R$2","Melhores Cotações","Freebets"],
-      disc:"Autorização SPA/MF nº 0010/2024: Publicidade. Aposte com responsabilidade. +18." },
-    { id:"OP3", nome:"Blaze", logo:"https://i.postimg.cc/Wb8d5BFM/blaze.png",
-      cta:"Aposte Agora", link:"https://go.terrordasbets.com/blaze", cor:"#FF0D0D", peso:20,
-      chips:["Jogos Exclusivos","Clube VIP","Rodadas Grátis"],
-      disc:"Autorização SPA/MF nº 471/2025: Publicidade. Aposte com responsabilidade. +18." },
-    { id:"OP4", nome:"BetMGM", logo:"https://i.postimg.cc/15sgcmtm/bet-mgm.png",
-      cta:"Aposte Agora", link:"https://go.terrordasbets.com/BetMGM", cor:"#B19661", peso:20,
-      chips:["Variedade de Mercados","Melhores Odds","Bolão Grátis"],
-      disc:"Autorização SPA/MF nº 2.098/2024: Publicidade. Aposte com responsabilidade. +18." },
-    { id:"OP5", nome:"Sorte Online", logo:"https://i.postimg.cc/0yNbFVDh/sorte-online.png",
-      cta:"Aposte Agora", link:"https://go.terrordasbets.com/sorte-online", cor:"#BD13BA", peso:20,
-      chips:["Raspabetz","Cashback até 25%","Roleta da Sorte"],
-      disc:"Autorização SPA/MF nº 259/2025 (Licença nº 0040): Publicidade. Aposte com responsabilidade. +18." }
-  ];
+<style>
+/* === Visual base (igual ao modelo fornecido) === */
+.sorte-footer {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  background: linear-gradient(90deg, rgba(10,88,160,0.98), rgba(7,128,100,0.95));
+  color: #fff;
+  padding: 16px 20px;
+  border-radius: 16px;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.35);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  max-width: 1100px;
+  margin: 0 auto;
+  text-decoration: none;
+}
+.sorte-footer__close {
+  position: absolute; top: 8px; right: 8px;
+  background: rgba(255,255,255,0.2);
+  border: none; color: #fff;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: background 0.2s;
+  z-index: 10000;
+}
+.sorte-footer__close:hover { background: rgba(255,255,255,0.3); }
+.sorte-footer__left { display: flex; gap: 14px; align-items: flex-start; flex: 1; }
+.sorte-footer__logo img { height: 56px; width: auto; background: #fff; padding: 4px; border-radius: 8px; }
+.sorte-footer__content { flex: 1; }
+.sorte-footer__headline { font-size: 16px; font-weight: 700; margin: 0 0 6px 0; }
+.sorte-footer__sub { font-size: 13px; opacity: 0.95; margin: 0 0 8px 0; }
+.sorte-footer__pool-list { display: flex; gap: 8px; flex-wrap: wrap; list-style: none; margin: 0; padding: 0; font-size: 12px; }
+.sorte-footer__pool-list li { background: rgba(255,255,255,0.15); padding: 6px 10px; border-radius: 999px; }
+.badge-hot { background: linear-gradient(90deg,#ffb86b,#ff6b6b); color: #111; font-weight:700; padding: 2px 6px; border-radius: 999px; font-size: 11px; margin-right: 4px; }
+.sorte-footer__right { display: flex; align-items: center; justify-content: center; }
+.sorte-btn { display: inline-block; background: #fff; color: #072b4a; padding: 12px 20px; border-radius: 10px; font-weight: 700; font-size: 15px; text-decoration: none; box-shadow: 0 6px 18px rgba(0,0,0,0.25); animation: pulse 2.4s infinite ease-in-out; }
+@keyframes pulse { 0% { transform: scale(1);} 50% { transform: scale(1.05);} 100% { transform: scale(1);} }
+/* Disclaimer */
+.sorte-footer__disc { margin: 10px 0 0; font-size: 11px; opacity:.85; }
+/* Responsivo */
+@media (max-width: 720px) {
+  .sorte-footer { flex-direction: column; text-align: center; left: 8px; right: 8px; bottom: 8px; padding: 8px; gap: 6px; border-radius: 12px; }
+  .sorte-footer__left { flex-direction: column; align-items: center; text-align: center; gap: 6px; }
+  .sorte-footer__logo img { height: 40px; }
+  .sorte-footer__headline { font-size: 13px; margin: 0 0 4px 0; }
+  .sorte-footer__sub { font-size: 11px; margin: 0 0 6px 0; }
+  .sorte-footer__pool-list { justify-content: center; gap: 6px; font-size: 11px; }
+  .sorte-footer__pool-list li { padding: 4px 8px; }
+  .sorte-footer__right { margin-top: 6px; width: 100%; }
+  .sorte-btn { width: 100%; text-align: center; padding: 10px 12px; font-size: 14px; }
+  .sorte-footer__disc { font-size: 10px; text-align: center; }
+}
+</style>
+</head>
+<body>
 
-  // ---- Helpers ----
-  const qs = new URLSearchParams(location.search);
-  const SUBID = qs.get('subid');
-  const FORCE = qs.get('op');             // OP1..OP5
-  const $ = (s, el=document) => el.querySelector(s);
-  const pad = () => {
-    // evita cobrir conteúdo do site
-    document.documentElement.style.scrollPaddingBottom = '120px';
-    document.body.style.paddingBottom = (innerWidth <= 560 ? '96px' : '110px');
-  };
-  const pickWeighted = list => {
-    const tot = list.reduce((a,b)=>a+(b.peso||0),0);
-    let r = Math.random()*tot;
-    for (const it of list){ r -= (it.peso||0); if (r<=0) return it; }
-    return list[0];
-  };
-  const shade = (hex, amt) => {
-    hex = (hex||'#222').replace('#','');
-    let [r,g,b] = hex.match(/.{1,2}/g).map(x=>parseInt(x,16));
-    r = Math.max(0,Math.min(255, r + Math.round(255*amt/100)));
-    g = Math.max(0,Math.min(255, g + Math.round(255*amt/100)));
-    b = Math.max(0,Math.min(255, b + Math.round(255*amt/100)));
-    return `#${[r,g,b].map(x=>x.toString(16).padStart(2,'0')).join('')}`;
-  };
+<a id="bet-footer"
+   class="sorte-footer"
+   href="#"
+   target="_blank"
+   rel="noopener noreferrer nofollow sponsored">
+  <button class="sorte-footer__close" type="button">×</button>
+  <div class="sorte-footer__left">
+    <div class="sorte-footer__logo"><img id="bet-logo" src="" alt="" /></div>
+    <div class="sorte-footer__content">
+      <p class="sorte-footer__headline" id="bet-headline"></p>
+      <p class="sorte-footer__sub" id="bet-sub"></p>
+      <ul class="sorte-footer__pool-list" id="bet-chips"></ul>
+      <p class="sorte-footer__disc" id="bet-disc"></p>
+    </div>
+  </div>
+  <div class="sorte-footer__right">
+    <span class="sorte-btn" id="bet-cta"></span>
+  </div>
+</a>
 
-  // ---- CSS isolado (prefixo apw-) ----
-  const css = `
-  .apw-wrap{position:fixed;left:16px;right:16px;bottom:16px;z-index:2147483647;color:#fff;
-    font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;border-radius:20px;
-    box-shadow:0 16px 40px rgba(0,0,0,.22);padding:14px;background:#0b5b7a;
-    background-image:linear-gradient(135deg,#0b5b7a 0%,#0f7a5e 60%,#119c48 100%);}
-  .apw-inner{display:grid;align-items:center;gap:14px;grid-template-columns:auto 1fr auto}
-  .apw-logo img{width:72px;height:72px;object-fit:contain;background:#fff;border-radius:16px;padding:10px;box-shadow:0 4px 16px rgba(0,0,0,.15)}
-  .apw-title{margin:0 0 6px;font-size:18px}
-  .apw-sub{margin:0 0 10px;color:#e7f6ffcc}
-  .apw-chips{display:flex;flex-wrap:wrap;gap:8px}
-  .apw-chip{background:#ffffff1f;color:#fff;padding:8px 12px;border-radius:999px;font-weight:600;font-size:13px;backdrop-filter:blur(4px)}
-  .apw-cta{display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;background:#fff;color:#0f172a;
-    font-weight:800;padding:14px 18px;border-radius:14px;text-decoration:none;box-shadow:0 8px 24px rgba(0,0,0,.18);
-    transition:transform .06s ease,filter .06s ease}
-  .apw-cta:hover{filter:brightness(.98)} .apw-cta:active{transform:translateY(1px)}
-  .apw-disc{margin:10px 0 0;font-size:12px;opacity:.9}
-  .apw-close{position:absolute;top:10px;right:12px;width:28px;height:28px;border:0;border-radius:999px;background:#ffffff2b;color:#fff;cursor:pointer;font-size:16px;display:grid;place-items:center}
-  .apw-close:hover{background:#ffffff3f}
-  @media (max-width:860px){
-    .apw-inner{grid-template-columns:56px 1fr;grid-template-areas:"logo cta" "logo copy";}
-    .apw-logo{grid-area:logo}.apw-copy{grid-area:copy}
-    .apw-cta{grid-area:cta;justify-self:end;font-size:14px;padding:12px 14px}
-    .apw-logo img{width:56px;height:56px}.apw-title{font-size:16px}.apw-chip{font-size:12px;padding:6px 10px}
-  }
-  @media (max-width:560px){
-    .apw-wrap{left:8px;right:8px;bottom:8px;padding:12px;border-radius:14px}
-    .apw-inner{grid-template-columns:44px 1fr;gap:10px}
-    .apw-logo img{width:44px;height:44px;border-radius:10px;padding:6px}
-    .apw-title{font-size:15px}.apw-cta{padding:10px 12px;font-size:13.5px}
-    .apw-disc{display:none}
-  }`;
+<script>
+const BRANDS = [
+  { id:"OP1", nome:"EstrelaBet", logo:"https://i.postimg.cc/sx9Md8nC/f12bet-1.png",
+    cta:"Aposte Agora", link:"https://go.terrordasbets.com/estrelabet",
+    chips:["Depósito Mínimo R$1","Promoções Incríveis","Rodadas Grátis"],
+    disc:"Autorização SPA/MF nº 320/2025: Publicidade. Aposte com responsabilidade. +18." },
+  { id:"OP2", nome:"F12bet", logo:"https://i.postimg.cc/MZyMQMz3/f12bet.png",
+    cta:"Aposte Agora", link:"https://go.terrordasbets.com/f12bet",
+    chips:["Depósito Mínimo R$2","Melhores Cotações","Freebets"],
+    disc:"Autorização SPA/MF nº 0010/2024: Publicidade. Aposte com responsabilidade. +18." },
+  { id:"OP3", nome:"Blaze", logo:"https://i.postimg.cc/Wb8d5BFM/blaze.png",
+    cta:"Aposte Agora", link:"https://go.terrordasbets.com/blaze",
+    chips:["Jogos Exclusivos","Clube VIP","Rodadas Grátis"],
+    disc:"Autorização SPA/MF nº 471/2025: Publicidade. Aposte com responsabilidade. +18." },
+  { id:"OP4", nome:"BetMGM", logo:"https://i.postimg.cc/15sgcmtm/bet-mgm.png",
+    cta:"Aposte Agora", link:"https://go.terrordasbets.com/BetMGM",
+    chips:["Variedade de Mercados","Melhores Odds","Bolão Grátis"],
+    disc:"Autorização SPA/MF nº 2.098/2024: Publicidade. Aposte com responsabilidade. +18." },
+  { id:"OP5", nome:"Sorte Online", logo:"https://i.postimg.cc/0yNbFVDh/sorte-online.png",
+    cta:"Participar do Bolão", link:"https://go.terrordasbets.com/sorte-online",
+    chips:["Raspabetz","Cashback até 25%","Roleta da Sorte"],
+    disc:"Autorização SPA/MF nº 259/2025 (Licença nº 0040): Publicidade. Aposte com responsabilidade. +18." }
+];
 
-  // ---- HTML container ----
-  const wrap = document.createElement('div');
-  wrap.id = 'apw-sticky';
-  wrap.className = 'apw-wrap';
-  wrap.innerHTML = `
-    <button class="apw-close" title="Fechar" aria-label="Fechar">×</button>
-    <div class="apw-inner">
-      <div class="apw-logo"><img id="apw-logo" alt="" loading="lazy"/></div>
-      <div class="apw-copy">
-        <h3 class="apw-title" id="apw-title">⚽ Aumente suas Chances nas Apostas Esportivas!</h3>
-        <p class="apw-sub" id="apw-sub">Mais mercados, melhores odds e bônus selecionados.</p>
-        <div class="apw-chips" id="apw-chips" role="list"></div>
-        <p class="apw-disc" id="apw-disc"></p>
-      </div>
-      <a class="apw-cta" id="apw-cta" href="#" target="_blank" rel="sponsored nofollow">Aposte Agora</a>
-    </div>`;
-  const style = document.createElement('style'); style.textContent = css;
+const qs = new URLSearchParams(location.search);
+const FORCE = qs.get('op');
+const last = sessionStorage.getItem('bf_last') || null;
 
-  // ---- Render ----
-  function render(op){
-    pad();
-    wrap.style.backgroundImage = `linear-gradient(135deg, ${shade(op.cor,-30)} 0%, ${shade(op.cor,-10)} 55%, ${op.cor} 100%)`;
-    const logo = $('#apw-logo', wrap); logo.src = op.logo; logo.alt = op.nome;
-    $('#apw-title', wrap).innerHTML = `⚽ Aumente suas Chances — <strong>${op.nome}</strong>`;
-    $('#apw-sub', wrap).textContent = 'Mais mercados, melhores odds e bônus selecionados.';
-    const chips = $('#apw-chips', wrap); chips.innerHTML = '';
-    (op.chips||[]).slice(0,5).forEach(t=>{
-      const el = document.createElement('span'); el.className='apw-chip'; el.role='listitem'; el.textContent = t; chips.appendChild(el);
-    });
-    const a = $('#apw-cta', wrap); a.textContent = op.cta || 'Aposte Agora';
-    try{ const u = new URL(op.link); if(SUBID) u.searchParams.set('subid', SUBID); a.href = u.toString(); }
-    catch{ a.href = op.link; }
-    $('#apw-disc', wrap).textContent = op.disc || '';
-  }
+function pickOne(list, avoidId){
+  const pool = avoidId ? list.filter(i=>i.id!==avoidId) : list;
+  return pool[Math.floor(Math.random()*pool.length)];
+}
 
-  // ---- Fechar e lembrar por 24h ----
-  function setupClose(){
-    const key='apw_closed_until';
-    const now=Date.now();
-    const until=Number(localStorage.getItem(key)||0);
-    if(until>now){ wrap.style.display='none'; return true; }
-    $('.apw-close', wrap).addEventListener('click',()=>{
-      wrap.style.display='none';
-      localStorage.setItem(key, String(now + 24*60*60*1000));
-    });
-    return false;
-  }
+const brand = (FORCE && BRANDS.find(b=>b.id===FORCE)) || pickOne(BRANDS,last);
+sessionStorage.setItem('bf_last',brand.id);
 
-  // ---- Montagem ----
-  document.head.appendChild(style);
-  document.body.appendChild(wrap);
-  if (setupClose()) return;
+document.getElementById('bet-footer').href = brand.link;
+document.getElementById('bet-logo').src = brand.logo;
+document.getElementById('bet-logo').alt = brand.nome;
+document.getElementById('bet-headline').innerHTML = `🎉 Aumente suas Chances — <strong>${brand.nome}</strong>!`;
+document.getElementById('bet-sub').innerHTML = `Mais bilhetes, mais números e muito mais chances de ganhar. <strong>Vagas limitadas!</strong>`;
+const chipsEl = document.getElementById('bet-chips');
+brand.chips.forEach((t,i)=>{
+  const li = document.createElement('li');
+  li.innerHTML = (i===0? `<span class="badge-hot">🔥 Mais Procurado</span> `:"")+t;
+  chipsEl.appendChild(li);
+});
+document.getElementById('bet-cta').textContent = `👉 ${brand.cta}`;
+document.getElementById('bet-disc').textContent = brand.disc;
 
-  let current = (FORCE && BRANDS.find(b=>b.id===FORCE)) || pickWeighted(BRANDS);
-  render(current);
+document.querySelector('.sorte-footer__close').addEventListener('click',e=>{
+  e.preventDefault(); e.stopPropagation();
+  document.getElementById('bet-footer').style.display='none';
+});
+</script>
 
-  // Pausa no hover + rotação a cada 12s
-  let paused=false;
-  wrap.addEventListener('mouseenter', ()=>paused=true);
-  wrap.addEventListener('mouseleave', ()=>paused=false);
-  setInterval(()=>{
-    if(paused) return;
-    let next = pickWeighted(BRANDS);
-    if(next.id===current.id) next = pickWeighted(BRANDS);
-    current = next; render(current);
-  }, 12000);
-})();
+</body>
+</html>
