@@ -1,30 +1,32 @@
-/* widgets-apostas v1.5 – mobile compacto (chips em linha) + disclaimer micro abaixo do botão */
+/* widgets-apostas v1.5 – BETMGM ONLY */
 (function(){
   if (window.__bet_footer_loaded) return; window.__bet_footer_loaded = true;
 
-  const BRANDS = [
-    { id:"OP4", nome:"BetMGM", logo:"https://i.postimg.cc/15sgcmtm/bet-mgm.png",
-      cta:"Aposte Agora", link:"https://go.terrordasbets.com/BetMGM",
-      sub:"Mercados ao vivo, Parlay Builder e estatísticas em tempo real.",
-      chips:["Variedade de Mercados","Melhores Odds","Bolão Grátis"],
-      disc:"Autorização SPA/MF nº 2.098/2024: Publicidade. Aposte com responsabilidade. +18." },
-  ];
+  const BRAND = {
+    id:"OP4",
+    nome:"BetMGM",
+    logo:"https://i.postimg.cc/15sgcmtm/bet-mgm.png",
+    cta:"Aposte Agora",
+    link:"https://go.terrordasbets.com/BetMGM",
+    sub:"Mercados ao vivo, Parlay Builder e estatísticas em tempo real.",
+    chips:["Variedade de Mercados","Melhores Odds","Bolão Grátis"],
+    disc:"Autorização SPA/MF nº 2.098/2024: Publicidade. Aposte com responsabilidade. +18."
+  };
 
   function start(){
     const qs = new URLSearchParams(location.search);
     const SUBID = qs.get('subid');
-    const FORCE = qs.get('op');
-    const last = sessionStorage.getItem('bf_last') || null;
     const isMobile = matchMedia('(max-width:720px)').matches;
 
-    const pickOne = (list, avoid) => {
-      const pool = avoid ? list.filter(x=>x.id!==avoid) : list;
-      return pool[Math.floor(Math.random()*pool.length)];
+    const withSubid = url => {
+      try{
+        const u = new URL(url);
+        if (SUBID) u.searchParams.set('subid', SUBID);
+        return u.toString();
+      } catch {
+        return url;
+      }
     };
-    const withSubid = url => { try{ const u=new URL(url); if(SUBID) u.searchParams.set('subid',SUBID); return u.toString(); } catch{ return url; } };
-
-    const brand = (FORCE && BRANDS.find(b=>b.id===FORCE)) || pickOne(BRANDS, last);
-    sessionStorage.setItem('bf_last', brand.id);
 
     const css = `
     .sorte-footer{position:fixed;bottom:20px;left:20px;right:20px;z-index:9999;display:flex;justify-content:space-between;align-items:center;gap:16px;background:linear-gradient(90deg,rgba(10,88,160,.98),rgba(7,128,100,.95));color:#fff;padding:16px 20px;border-radius:16px;box-shadow:0 8px 28px rgba(0,0,0,.35);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial;max-width:1100px;margin:0 auto;text-decoration:none}
@@ -48,7 +50,6 @@
       .sorte-footer__logo img{height:36px}
       .sorte-footer__headline{font-size:13px;margin:0 0 2px 0}
       .sorte-footer__sub{font-size:11px;margin:0 0 4px 0}
-      /* chips em linha com scroll horizontal (não quebra em 2 linhas) */
       .sorte-footer__pool-list{justify-content:flex-start;flex-wrap:nowrap;overflow:auto;gap:6px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
       .sorte-footer__pool-list::-webkit-scrollbar{display:none}
       .sorte-footer__pool-list li{flex:0 0 auto;padding:4px 8px;font-size:11px}
@@ -58,39 +59,42 @@
     }
     @media (prefers-reduced-motion:reduce){.sorte-btn{animation:none!important}}
     `;
-    const style = document.createElement('style'); style.textContent = css;
+
+    const style = document.createElement('style');
+    style.textContent = css;
     document.head.appendChild(style);
 
-    // limita chips a 3 no mobile
-    const chipsToShow = isMobile ? (brand.chips || []).slice(0,3) : (brand.chips || []);
+    const chipsToShow = isMobile ? (BRAND.chips || []).slice(0,3) : (BRAND.chips || []);
 
     const html = `
-      <a id="bet-footer" class="sorte-footer" href="${withSubid(brand.link)}" target="_blank" rel="noopener noreferrer nofollow sponsored" aria-label="Aposte agora com ${brand.nome}">
+      <a id="bet-footer" class="sorte-footer" href="${withSubid(BRAND.link)}" target="_blank" rel="noopener noreferrer nofollow sponsored" aria-label="Aposte agora com ${BRAND.nome}">
         <button class="sorte-footer__close" type="button" aria-label="Fechar banner">×</button>
         <div class="sorte-footer__left">
-          <div class="sorte-footer__logo"><img src="${brand.logo}" alt="${brand.nome}"></div>
+          <div class="sorte-footer__logo"><img src="${BRAND.logo}" alt="${BRAND.nome}"></div>
           <div class="sorte-footer__content">
-            <p class="sorte-footer__headline">🎉 Aumente suas Chances — <strong>${brand.nome}</strong>!</p>
-            <p class="sorte-footer__sub">${brand.sub}</p>
+            <p class="sorte-footer__headline">🎉 Aumente suas Chances — <strong>${BRAND.nome}</strong>!</p>
+            <p class="sorte-footer__sub">${BRAND.sub}</p>
             <ul class="sorte-footer__pool-list">
               ${chipsToShow.map((t,i)=>`<li>${i===0?'<span class="badge-hot">🔥 Mais Procurado</span> ':''}${t}</li>`).join("")}
             </ul>
           </div>
         </div>
         <div class="sorte-footer__right">
-          <span class="sorte-btn">👉 ${brand.cta || 'Aposte Agora'}</span>
-          <p class="sorte-footer__disc">${brand.disc}</p>
+          <span class="sorte-btn">👉 ${BRAND.cta || 'Aposte Agora'}</span>
+          <p class="sorte-footer__disc">${BRAND.disc}</p>
         </div>
       </a>`;
-    const root = document.createElement('div'); root.innerHTML = html;
+
+    const root = document.createElement('div');
+    root.innerHTML = html;
     document.body.appendChild(root.firstElementChild);
 
     document.querySelector('.sorte-footer__close').addEventListener('click', (e)=>{
       e.preventDefault(); e.stopPropagation();
-      document.getElementById('bet-footer').style.display = 'none';
+      const el = document.getElementById('bet-footer');
+      if (el) el.style.display = 'none';
     });
 
-    // corpo com espaço menor (já que ficou mais compacto)
     const pad = document.createElement('style');
     pad.textContent = `body{padding-bottom:92px}@media(max-width:720px){body{padding-bottom:80px}}`;
     document.head.appendChild(pad);
