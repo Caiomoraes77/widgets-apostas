@@ -1,4 +1,4 @@
-remova deixando apenas a BetMGM: /* widgets-apostas v1.5 – mobile compacto (chips em linha) + disclaimer micro abaixo do botão */
+/* widgets-apostas v1.5 – mobile compacto (chips em linha) + disclaimer micro abaixo do botão */
 (function(){
   if (window.__bet_footer_loaded) return; window.__bet_footer_loaded = true;
 
